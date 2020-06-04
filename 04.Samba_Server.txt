@@ -1,0 +1,45 @@
+SAMBA Server Configuration
+----------------------------
+It is a cross platform file sharing Server
+
+SMB     - Server Message Block   - Linux
+NMB     - NetBios Message Block  - Windows
+Port No - 139 and 445
+Package - yum install samba* -yum
+Path    - /etc/samba/smb.conf
+
+Configuration
+--------------
+1. yum install samba* -y
+
+2.vim /etc/samba/smb.conf
+  Go to the end of the line and enter below mentioned syntax
+
+  [Test]
+         comment    = Testing samba service
+         path       = /winfile
+         read only  = No
+         browseable = yes
+         writeable  = yes
+         valid user = thendral          
+;wq
+
+3. useradd thendral
+
+4. smbpasswd -a thendral
+
+5. mkdir /winfile 
+
+6. cd /winfile 
+
+7. touch win1.txt
+
+8. service smb nmb restart
+
+9. Ping the target machine IP in linux machine 
+
+10. Go to the windows (target) machine trun of the firewall and ping the ip address
+
+11. win + R type the linux machine ip 
+
+12. enter samba user and passwd

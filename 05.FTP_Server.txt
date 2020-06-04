@@ -1,0 +1,104 @@
+FTP Server Configuration
+--------------------------
+
+FTP     - File Transfer Protocol 
+          It transfer the file from one location to another location based on set of rules (Protocol)
+          we can save important user files in file server
+          we can provide individual user name and password
+          we can access those files from different applications via browser and windows explorer
+we can access FTP server through 2 user account
+1. Anonymous account   - pubilc account no password
+2. Noraml user account
+
+Port No - 20,21
+Package - yum install vsftpd* -y
+service - service vsftpd start
+
+FTP Server Configuration
+-------------------------
+
+1. yum install vsftpd* -y
+
+2. useradd kanimozhi
+
+3. passwd kanimozhi
+
+4. cd /home/kanimozhi 
+
+5. mkdir test 
+
+6. touch new.txt
+
+7. cat >> new.txt  hi this is the file
+
+8. Go to the client login with the kanimozhi user account.
+
+9. ping the server ip 
+
+10. yum install vsftpd* -y
+
+11. Both side service vsftpd start and turn off the firewall
+
+12. ftp (enter server ip address)
+
+13. enter the username and password
+
+14. ls  ----- it will list out the files and folder in the server
+
+15. If you want download the file using  # get <file name>
+
+16. bye  ----- it will exit from the ftp
+
+17. If you want access the ftp via browser ftp://<server ip address>
+
+18. If you want access the file from the windows explorer ftp://kanimozhi@<server ip address>
+
+19. cd /etc/sysconfig
+
+20. cd /etc/vsftpd
+
+21. ls
+
+Anonymous user Configuration
+------------------------------
+1. cd /var/ftp
+
+2. what ever file you can copy here it will Anonymous
+
+3. cd /etc/sysconfig/etc/vsftpd/
+
+4. vim vsftpd.conf 
+
+5. Edit the line Anonymous_enable=NO
+
+6.;wq
+
+7. service vsftpd restart
+
+8. Anonymous account will not work
+
+Blocking normal user
+----------------------
+Menthod : 1
+
+1. make sure your are in vsftpd path
+
+2. vim user_list   | userlsit_deny = NO / Yes 
+
+for confirming is YES / NO
+
+3. vim vsftpd.conf
+
+4. serach and check userlist_deny
+
+5. service ftpd restart 
+
+Menthod : 2
+
+1. vim ftpusers     ---- what all the users in the files are not allowed
+
+2. service vsftpd restart
+
+Note : the difference between method 1 and 2 is 
+       1st menthod if you enter the password suudenly display login firewall
+       2nd method you enter username and password it shows login failed

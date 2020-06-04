@@ -1,0 +1,75 @@
+#yum server installation
+-------------------------
+insert the related os iso image in the system
+
+mkdir -p /var/ftp/pub
+
+cp -var /mnt/* /var/ftp/pub
+
+cd /var/ftp/pub
+
+cd /var/ftp/pub/repodata
+
+# copy the file end with .xml to /root
+cp .xml /root
+
+cd ..
+
+cd Packages
+
+rpm -ivh createrepo <Press tab key>
+
+createrepo -v /var/ftp/pub
+
+createrepo -g /root/.xml/var/ftp/pub
+
+cd /etc/yum.repos.d
+
+vim server.repo
+
+[server]                        |  Lable of the repository
+name=Repository server
+baseurl=file://var/ftp/pub
+enabled=1                       |  This key defines the state of repository. If value is set to 1 then repository is enabled.
+                                   If value is set to 0 then repository is disabled.
+gpgcheck=0                      |  This key defines whether the integrity of package should be check or not. If value is set to 1, integrity will be checked.
+                                   If value is set to 0, integrity will not be checked. Integrity Checking protects important system files against unauthorized modifications.
+
+save and exit
+
+yum clean all
+
+yum list all
+
+yum install vsftpd* -yum
+
+systemctl start vsftpd.service
+systemctl enable vsftpd.service
+systemctl restart vsftpd.service
+
+command in yum for regular usages:
+----------------------------------
+
+1. Checking how many packages are available in your local repository
+
+# yum list available | wc -l
+
+2. Checking how many packages are installed in your system
+
+# yum list installed | wc -list
+
+3. Checking for particular pacakes installed with their depandancies
+
+# yum list | grep java           --- if packages start with @ is installed, @ not means not yet installed
+
+4. remove particular packages in yum 
+
+# yum remove <package name>
+
+5. Information & version about the particular package
+
+# yum info <package name>
+
+6. Searching package using best option 
+
+# pkcon search name <package name>

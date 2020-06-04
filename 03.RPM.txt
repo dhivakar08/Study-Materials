@@ -1,0 +1,13 @@
+1. How to find which package certain command belongs to which package   
+
+Very important question asked for CGI
+
+rpm -qf $(which date)        ---- Here after which mentioned which command want to findout
+
+for debian os
+
+dpkg -S $(which free)
+
+2. How to find the command excutable path
+
+which <command name>

@@ -1,0 +1,106 @@
+NFS server
+------------
+NFS (Network File System) is basically developed for sharing of files and folders between Linux/Unix systems
+
+Packaes : yum install nfs-utils* -y
+Port    : 111 , 2049
+Service : systemctl start nfs-server.Service
+Path    : /etc/exports
+Syntax  : Location  Destination (Permission)
+
+
+Benefits of NFS
+---------------------
+
+1.NFS allows local access to remote files.
+2.It uses standard client/server architecture for file sharing between all *nix based machines.
+3.With NFS it is not necessary that both machines run on the same OS.
+4.With the help of NFS we can configure centralized storage solutions.
+5.Users get their data irrespective of physical location.
+6.No manual refresh needed for new files.
+7.Newer version of NFS also supports acl, pseudo root mounts.
+8.Can be secured with Firewalls and Kerberos.
+
+Note : The difference between ftp & NFS ftp we can provide user accounts but nfs configured using "N" devices
+
+NFS server configuration
+-------------------------
+
+1. mkdir  /nfs_share
+
+provide necessary permission to that share directory 
+
+2. vim /etc/exports
+
+/nfs_share   <enter the ip address of the client>(rw)       ---- rw is the read write permission
+
+Examples
+----------
+1. If you want to share particular IP series you can specify 192.168.20.0/24
+2. if you want to share particular domain series you can specify *example.com
+3. If i provide only *(rw) who all are able to ping that machine it will share
+---------------------------------------------------------------------
+
+3. To verify it shared are not
+
+# exportfs
+
+4. start the nfs services
+
+client configuration 
+--------------------
+
+1. To verify share is working 
+
+# showmount -e <enter the ip address>
+
+2. Mounting file create one mount directory
+
+# mkdir /mnt/mount
+
+3. Temporary mounting 
+
+# mount -t nfs <ip address>:/nfs_share  /mnt/mount     ---- here -t is the type of mount
+
+4. Verify tmp mount
+
+# mount | grep nfs    (or)  df -Th
+
+5. Permanent mounting
+
+# vim /etc/fstab
+
+# [sharefile]  [mount_dir]  [type_of_file] [default] [0 0]
+
+- default   ---- here defaults is the option no of options available like exec,nonexec,user,nonuser
+
+- 0         ---- the dump (backup utility) program. If the value is set to 0, then the partition is excluded from taking backup.
+                 if the option is a nonzero value, the filesystem will be backed up.
+
+- 0         ---- Mentions the fsck option. That is if the value is set to zero, the device or partition will be excluded from fsck check. 
+                 if it is nonzero the fsck check will be run in the order in which the value is set.1 means first check fsck 2 maens reboot.
+
+Note : The FSCK is a system utility. It is a tool that is used to check the consistency of a file system in the Unix-like operating systems.
+
+NFS Permissions :
+-----------------
+1. rw             - Reand and write
+2. ro             - Rean only
+3. sync           - shared directory only once the changes have been committed.
+4. async          - specifies that the server does not have to wait
+5. no_root_squash - This phrase allows root to connect to the designated directory / does not change the mapping of remote users
+6. squash_all      - to squash all remote users including root
+
+
+Important commands for NFS
+---------------------------
+1.showmount -e : Shows the available shares on your local machine
+2.showmount -e <server-ip or hostname>: Lists the available shares at the remote server
+3.showmount -d : Lists all the sub directories
+4.exportfs -v : Displays a list of shares files and options on a server
+5.exportfs -a : Exports all shares listed in /etc/exports, or given name
+6.exportfs -u : Unexports all shares listed in /etc/exports, or given name
+7.exportfs -r : Refresh the server’s list after modifying /etc/exports
+
+Note : If yu assign (rw) permission in exports file but your file have (r) permissions means client cannot edit your file.
+       So both the permission will same then only client will edit your files.
