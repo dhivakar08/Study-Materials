@@ -1,0 +1,287 @@
+Email Server
+-------------
+Postfix
+--------
+
+1.It is MTA - Mail Transfer Agent
+2.It can routes and delivers electronic Mail
+
+Comfiguration File
+
+1./etc/postfix/main.cf 
+2./etc/postfix/master.cf 
+
+Dovecot
+--------
+
+1.It is MBI - Mail Box Interface
+2.It is an IMAP or POP3 package
+
+Configuration File
+
+1./etc/dovecot/conf.d/10-master.conf
+2./etc/dovecot/conf.d/10-auth.conf
+3./etc/dovecot/conf.d/10-mail.conf
+4./etc/dovecot/conf.d/20-pop3.conf 
+
+Protocols
+---------
+SMTP - Postfix
+POP3 - Dovecot
+HTTPS - Apache
+
+Clients
+--------
+Webmail - squirrelmail
+Desktop application - Thunderbird
+
+Pre-requisites
+----------------
+1. Set Hostname
+2. Set IP Address
+3. Turn off the firewall
+4. Configure DNS Server with MX record and Alias name
+5. Download and run the postfix installation script
+
+#!/bin/bash
+yum install epel-release -y
+yum install postfix dovecot telnet squirrelmail mod_ssl openssl -y 
+mkdir /etc/postfix/ssl 
+cd /etc/postfix/ssl 
+openssl req -x509 -nodes -newkey rsa:2048 -keyout server.key -out server.crt -nodes -days 365 
+cp server.key /etc/pki/tls/private/ca.key 
+cp server.crt /etc/pki/tls/certs/ca.crt
+ls /etc/pki/tls/certs
+
+6. cd /root
+
+7. mkdir script
+
+8. cd script
+
+9. vi postfix-installation.sh
+
+10. copy the above script 
+
+11. sh postfix-installation.sh
+
+once the script was running scessfull it will ask some input
+
+Ex : 
+
+1. Country Name : IN 
+2. State        : Tamilnadu
+3. City         : Chennai
+4. Organization Name : Enter your Organization name
+5. Organizational Unit Nmae : IT support
+6. Common Name : skip
+7. Email Address : 
+
+12. cd /root
+
+Postfix Comfiguration
+---------------------
+
+myhostname = server.paylin.com
+mydomain = paylin.com
+myorigin = $mydomain
+home_mailbox = mail/
+mynetworks = 192.168.1.0/24
+inet_interfaces = all
+inet_protocols = all
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+
+
+1. vim /etc/postfix/main.cf
+
+2. set nu
+
+Go to 75th line serach #myhostname  enter your Hostname
+
+3. 83rd line enter your DNS name (example.com)
+
+4. 99th line remove # like (myorigin = $mydomain)
+
+5. 116 line put # like (#inet_interfaces = localhost )
+
+6. Remove # from 113
+
+7 . Put # on 164
+ 
+8. Remove # on 166
+
+9. Remove # on 249
+
+10. Remove # on 264 and enter your ip address 
+
+11. line 418 remove the # like (home_mailbox = mail/)
+
+12 copy and past below mentioned lines to end of the postfix File
+
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_local_domain =
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
+smtpd_sasl_auth_enable = yes
+smtpd_recipient_restrictions = permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination
+smtp_tls_security_level = may
+smtpd_tls_security_level = may
+smtp_tls_note_starttls_offer = yes
+smtpd_tls_loglevel = 1
+smtpd_tls_key_file = /etc/postfix/ssl/server.key
+smtpd_tls_cert_file = /etc/postfix/ssl/server.crt
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/urandom
+
+13. vim /etc/postfix/master.cf 
+
+Go to smtp inet n - n line and copy past below line under this line.
+
+submission inet n - n - - smtpd                                      ##### correct the line space using TAB
+-o syslog_name=postfix/submission
+-o smtpd_sasl_auth_enable=yes
+-o smtpd_recipient_restrictions=permit_sasl_authenticated,reject
+-o milter_macro_daemon_name=ORIGINATING
+smtps inet n - n - - smtpd                                             ##### correct the line space using TAB
+-o syslog_name=postfix/smtps
+-o smtpd_sasl_auth_enable=yes
+-o smtpd_recipient_restrictions=permit_sasl_authenticated,reject
+-o milter_macro_daemon_name=ORIGINATING 
+
+Dovecot Configuration
+---------------------
+1. vim /etc/dovecot/conf.d/10-master.conf
+
+set nu
+
+2. Go to 96th line remove #
+
+3. mode = 0660
+   user = postfix
+   group = postfix
+}
+
+;wq 
+
+4. vim /etc/dovecot/conf.d/10-auth.conf
+
+set nu
+
+5. Go to 100 line auth_mechanisms = plain login
+
+;wq
+
+6. vim /etc/dovecot/conf.d/10-mail.conf
+
+7. Serach  mail_location = maildir:~/mail 
+
+8. vim /etc/dovecot/conf.d/20-pop3.conf
+
+9. Enable pop3_uidl_format = %08Xu%08Xv
+
+Mail Service Verification
+--------------------------
+1.systemctl restart postfix
+2.systemctl enable postfix
+3.systemctl restart dovecot
+4.systemctl enable dovecot
+5.telnet localhost smtp
+6.telnet localhost pop3
+
+HTTPD Configuration
+--------------------
+1. vim /etc/httpd/conf/httpd.conf
+
+Go to the last line copy and past the below Configuration
+
+<Directory /usr/share/squirrelmail>
+Options Indexes FollowSymLinks
+RewriteEngine On
+AllowOverride All
+Order allow,deny
+Allow from all
+</Directory>
+
+3. vim /etc/httpd/conf.d/mail-linpay-com.conf 
+
+Modifiy the configuration based on your requirement
+
+<VirtualHost 192.168.1.30:443>
+ServerName server.linpay.com
+ServerAlias mail.linpay.com
+DocumentRoot /usr/share/squirrelmail
+DirectoryIndex index.php
+SSLEngine on
+SSLCertificateFile /etc/pki/tls/certs/ca.crt
+SSLCertificatekeyFile /etc/pki/tls/private/ca.key
+ErrorLog /var/www/html/mail-linpay-com/error.log
+CustomLog /var/www/html/mail-linpay-com/access.log combined
+</VirtualHost>
+
+4. mkdir /var/www/html/mail-linpay-com
+
+5. vim /etc/htppd/conf.d/ssl.conf
+
+find SSL Protocol support
+
+SSLProtocol -all +TLSv1.2            ------ it accept only TLSv1.2
+
+Squirrelmail configuration
+--------------------------
+1. cd /usr/share/squirrelmail/config 
+
+2. ./conf.pl
+
+3. Enetr 2
+
+4. Enter 1
+
+5. Enetr DNS Name
+
+6. Enter 3
+
+7. Enter 2
+
+8. Save and enter
+
+9. return
+
+10. save enter 
+
+11. quite enter q 
+
+Adding User Accounts
+---------------------
+1. useradd -m <Enter your username> -s /sbin/nologin
+
+2. passwd <Your user>
+
+START all services
+------------------
+1.systemctl start httpd 
+2.systemctl enable httpd
+3.systemctl restart postfix
+4.systemctl restart dovecot
+
+Client Configuration
+----------------------
+1. Set the client ip to our DNS
+
+2. Ping ip and name resolution of our server ip
+
+3. open the web browser https://<enter server host> click advance add acception
+
+4. Enetrt username and password
+
+Thunderbird access
+-------------------
+1. Download and install Thunderbird setup.exe 
+
+2. skip and use exsiting mail setup
+
+3. configure mail settings
+
+
+

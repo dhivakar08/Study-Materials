@@ -11,3 +11,7 @@ dpkg -S $(which free)
 2. How to find the command excutable path
 
 which <command name>
+
+3. The package is installed or not checking 
+ 
+   rpmquery  <package name>     

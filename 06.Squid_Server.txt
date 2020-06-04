@@ -1,0 +1,109 @@
+Squid Server
+-------------
+Squid is web proxy and caching Server
+It helps administrator to provide the great internet speed to local users using caching technic
+Also, an admin can restict local network to access internet
+1.Who can access the internet
+2.What sites users can access
+
+Port No - 3128
+Package - yum install squid* -y
+
+Configuration 
+--------------
+1. yum install squid* -y
+
+2. cd /etc/squid
+
+3. vim squid.conf  
+
+enable cache_dir ufs /var/spool/squid 100 16 256
+
+100 16 256 ----- first it cache 100 MB 16 folder and 256 sub-folder
+
+Now i change the value to 2 GB so 
+
+cache_dir ufs /var/spool/squid 2000 16 256
+
+we need to unblock the network
+
+we need to provide your network ip address in 
+
+acl localnet src 10.0.0.0/8  ---- change your ip
+
+4. ;wq
+
+5. open the browser choose edit click preferances click advance select network click settings
+
+select manual proxy settings provide your ip address and port no 3128
+
+check use this proxy server for all protocols
+
+click ok and close
+
+6. stop the firewall
+
+7. service squid restart
+
+Finding who all are use this server
+-----------------------------------
+vim /var/log/squid/access.log
+
+Block the IP address
+---------------------
+1. vim squid.conf
+
+find the line insert your own rules
+
+2. acl bip src <ip address of blocking system>
+http_access deny bip                         ------- bip means blockip
+
+3. ;wq
+
+4. service squid restart
+
+Blocking network
+-----------------
+ find the line in the configuration file example rule allowing access from your local networks.
+ http_access deny localhost ---- it completly down
+ http_access allow localhost  ----- it will work
+
+Blocking website
+------------------
+find the line insert your own rules
+
+acl ws dstdomain www.facebook.com
+http_access deny ws          ------- ws means website
+restart the service
+
+Note : each and every time we can't put the website so we put the website list in a one file and call that file
+
+ex : cl ws dstdomain <enter the file location>
+
+Using Keywords to block the sites
+----------------------------------
+find the line insert your own rules
+
+acl kys url_regex "<Keyword file path>"
+http_access deny kys
+
+Proxy Authentication
+---------------------
+1. yum install httpd-tools* -y 
+
+ create one file
+ change the ownership of the file to squid
+
+2. htpasswd  <created file path >  <user name>  --- which user you want to create that user name
+
+3. vim squid.conf 
+find the line insert your own rules
+auth_param basic program /usr/lib64/squid/basic_ncsa_auth  /etc/squid/<file name>
+auth_param basic children 5 ---- here 5 is how many user login at the time
+auth_param basic realm <domain name of your infra> Authentication
+auth_param basic credentialttl 2 hours   ----- how many hours will active
+
+acl auth_users proxy_auth REQUIRED
+http_access allow auth_users
+;wq
+restart the service

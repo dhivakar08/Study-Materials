@@ -1,0 +1,57 @@
+Logs
+-----
+1.Logs are the files that contain messages about system, Kernel, Services & applications running on it.
+2.There are differenet types of log files for storing various information.
+3.Separate log file for:
+  1.system logs, 2.security logs, 3.cron job logs
+4.Log files are very important in troubleshooting issues.
+
+location : /var/log  ---- is the directory where logs are kept persistently
+
+Types of logs 
+--------------
+1.syslog     - UDP
+2.syslog-ng  - TCP & TLS security
+3.rsyslog    - RELV                 | conf : /etc/rsyslog.conf
+
+1./var/log/messages - related to authentication & emails,cron jobs etc
+2./var/log/secure   - related to security & authentication related messages & errors - like ssh
+3./var/log/maillog  - related to mail server
+4./var/log/cron     - related to execution of cron jobs
+5./var/log/boot.log - related to system startup messages
+
+Note : systemd-analyze command will help to check how much time the system will take to boot
+       systemd-analyze blame it will show individual service time to UDP
+
+Log rotate / retention
+-----------------------
+
+Normally system will take 4 weeks time to rotate the log
+
+Package of the log rotate : rpmquery logrotate
+file location             : /etc/logrotate.conf
+
+Journald daemon
+------------------
+In rhel 7, log file are also managed by "journald" daemon
+journald is a component of systemd
+journald captures:
+------------------
+1.syslog messages
+2.Kernel log
+3.initial RAM disk 
+4.Early boot messages
+5.Standard errors & OUTPUT of all Services
+
+# journaldctl   ---- just enter it will show the logs
+
+The journald logs are not available after the system reboot because they are stored in small amount of memory
+Location is /run/log/journal 
+
+Timedatectl
+-------------
+1. timedatectl list-timezones   ---it will list out the time zones
+2. timedatectl set-timezone <enter the timezone>
+3. Enable the NTP server
+   timedatectl set-ntp true 
+4. timedatectl set-time <enter the time like 09:09:09>

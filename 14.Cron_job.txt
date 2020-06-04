@@ -1,0 +1,70 @@
+Grep
+-----
+Global regular expression print 
+
+Grep will find a string from a given input
+
+Two ways in which grep can take input:
+--------------------------------------
+1.Grep can be used to search from a file / directory
+2.Grep can also accept input from other commands via pipes
+
+Grep Syntax
+------------
+1.grep 'word' file                               ----- Ex: grep 'alok' passwd
+2.-i case insensitive
+3.-w search complete word
+4.-v inverted search                              ----- Ex: grep -i -v 'alok' passwd except the line that contain that
+5.-r recursive search,include subdirectories
+6.-L list the names of files containing the word
+7.-E everything in the search list                ----- Ex: grep -i -E [a-d]'lok' passwd
+8.^ it used to search starting of the line        ----- Ex: grep -i -E '^root' passwd
+9.$ it used to search end of the line             ----- Ex: grep -i -E 'bash$' passwd 
+
+Cron
+-----
+Admins can benefits a lot by scheduling tasks.
+Tasks like:
+1.Backup
+2.Cleaning old files
+3.Updating packages
+
+Windows have a "Task Scheduler", We have "cron"
+Cron is a system service that run in background,Checks for scheduling tasks called "cron-jobs"
+Cron jobs are definedin configuration files,crontab which scan cron every minute
+Crontab is much like your planner,it stores information about your jobs.What to do when to do.
+
+Syntax 
+-------
+cat /etc/crontab
+services = crond
+
+ex: i went to execute df -h in 18hr
+crontabt -e 
+
+#min hour day-of-month month day-of-week commands
+03 18 * * * /usr/bin/df -h > /tmp/crondisk.txt
+for checking # crontab -l 
+
+Assign a crontab access to particular user
+crontab -u alok -e 
+
+How to diable crontab access to particular user is
+--------------------------------------------------
+Uding cron.deny file 
+vim cron.deny put that entry of the user
+
+at command
+-----------
+You might need to run a job only once at can be used 
+at can be used to read command from a file using -f option or from STDIN (keyboard) 
+
+Ex : today 10pm my system will rboot
+# at 10pm
+at> poweroff
+at> ctrl+d 
+#at -l
+#at -c <job number like 1st or 2nd>   ---- it will show the information about the job
+remove the at job using
+#atrm <jobnumber>
+Note : check crontab.guru to check the lotof syntax

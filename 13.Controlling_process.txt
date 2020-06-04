@@ -1,0 +1,45 @@
+Controlling services and daemons using systemctl commands
+
+Boot Process being with :
+-------------------------
+1.BIOS (Basic Inupt/Output System)
+After completing hardware initialization and checks
+2.Boot loader is loaded - GRUB
+3.Boot loader access MBR (Master Boot Record) on HDD
+4.uses the data there o start Linux kernel
+5."systemd"is the first process started by kernel on RHEL (pid 1)
+6.systemd then starts all the necessary daemons,background processes and service required to make the OS work.
+
+ Introduction to systemd
+ ------------------------
+ 1.systemd is a system and service manager
+ 2.compatible with sys v init scripts in rhel 5 and 6
+ 3.parallel startup of services at boot time
+ 4.systemd introduces a concept of "system units"
+ 5.system units are represented by unit configuration files:
+   1./etc/systemd/system         - managed by admin
+   2./run/systemd/system         - created at runtime
+   3./usr/lib/systemd/system     - distributed with package installation
+
+ What is units
+ -------------
+ 1.Any resource that the system knows how to operate & manage.
+ 2.These resources are defined using configuration files called "unit files"
+ 3.Units are classified based on types of resurces they describe, common are:
+   1.service units
+   2.socket units
+   3.path units
+   4.mount units
+   5.device units
+   6.target units 
+
+ 1.systemctl                     ----- it shows all the services
+ 2.systemctl --type=service      ----- it shows only particular services
+
+ Note : # systemctl list-dependencies httpd.service   ------ it will show the related service dependencies
+
+ 3.systemctl edit --full sshd.service    -------- with out knowing the actual configuration file we can edit "restartsec" we can edit
+
+ 4.systemctl cat sshd.service            -------- with out open it will show the content
+
+ 5.systemctl show sshd.service

@@ -1,0 +1,90 @@
+ What sudo do :
+ ---------------
+ 1. Delegate Authority
+ 2. Run commands as root or other user
+ 3. Providing an audit trail of the commands (Accountability)
+ 4. Record user session
+ 5. Prevent password sharing
+
+ Path : /etc/sudoersfile        ----- it is enterprise wide file 
+
+ Best Practice:
+ --------------
+ 1.Always edit with visudo
+ 2.One file for wholeenterprise
+ 3.Use host_alias to group servers
+ 4.Use user_alias to group users 
+ 5.Use %groupname when you can use OS user groups 
+
+ Syntax
+ -------
+ [who] [where (on which system)] [Run As (user:group)] [Command and parameters] 
+
+ Command Section
+ ----------------
+ 1.Single command                                     Ex : Cmnd_Alias  USER_MGMT =
+ 2.Comma separated list of commands                        /sbin/useradd,/sbin/usermod,/sbin/userdel
+ 3.Command alias 
+ 4.! to deny commands
+
+ Best Practice
+ -------------
+ 1. Never grant ALL for commands
+ 2. Use cmnd_alias to group commands
+
+ Note : The actual permission of the sudoersfile is 440
+ 
+ Open the sudo files
+ --------------------
+
+ sudo visudo -f /etc/sudoers
+
+ 1. Single user previlages
+
+ Ex : root  ALL=(ALL)  ALL     ----- means 1.user root  2.system ALL   3.Type of User ALL   4.Command ALL
+ The root user in any system in all type of user will run any command
+
+ 2. Group previlages 
+
+ Ex : %sudo ALL=(ALL)  ALL 
+
+ 3. Any user in the admin group will have the sudo access
+
+ Ex : %admin ALL=(ALL)  ALL 
+
+ Some Interesting tricks
+ ------------------------
+ 1.Always use "visudo" program to edit the /etc/sudoers file, and not any other
+   editor like vi or vim ...... because..
+   a. It locks the file ..... so only one user can edit thr file at a time.
+   b. Verify the syntax and prompt you for the action.
+
+ 2.Always force the sudo to prompt for the password.
+   under /etc/sudoers, using visudo
+ 
+   Defaults timestamp_timeout=0                 #system wide setting
+   Defaults:username timestamp_timeout=0        #user spcific setting
+
+ 3.Delegate the control to run any program under a directory.
+   Under /etc/sudoers, using visudo
+   aryan ALL=(root) /sbin/                      #end with / ... that means user can run any
+                                                #Application under the /sbin/directory
+                                                #Never descent into subdirctory
+
+ 4. Don't allow user to use any command argument
+    alok ALL=(root) /bin/df ""                  #cannot use any command argument
+    alok ALL=(root) /bin/df                     #use any command argument like [df -h]
+
+ 5. A whole command and the argument can be passed in sudo. Say for example,
+    I want that user aryan shuld be able to change passwords for users alok, arnav
+
+    alok ALL=(root) /usr/bin/passwd alok,    /ur/bin/passwd arnav
+
+ 6. Allow a user to start or stop a daemon
+    alok ALL=(root) /etc/init.d/httpd restart, /etc/init.d/httpd/status 
+
+ 7. Report of all sudo un-authorized attemps.
+    
+    Install the logwatch - yum install logwatch 
+    logwatch --print --service sudo --range all
+    

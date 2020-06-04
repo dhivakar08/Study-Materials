@@ -1,0 +1,69 @@
+Process in Linux
+-----------------
+1. Process carries out tasks in OS
+2. Process is a computer application doing something, in action
+3. Each process does seprate tasks with own rights
+4. If one process crashes, it will not cause other processes to crash 
+
+Type of Process
+-----------------
+1. User Process
+                - It started by a regular user and they run in user space
+                - It has no special access to CPU or to the files that doesn't belongs to him
+
+2.Daemon Process 
+                - Designed to run in the background
+                - Managing some kind of ongoing service
+                - Like "sshd","httpd","crond"| daemons always end with "d"
+                - Normally managed as service by user root and they procees often run as "non-root" user by a user account (sshd | ftp users)
+                - The daemons are started automatically and running backgroud 
+                - Advantages of running daemon process as "non-root" is that system is better protectrd, in event of the attack.
+                - Often started at boot time and run untill the system is shut down
+                - daemons can be started / stopped on demand, using "systemctl" command
+         
+         3. kernel Process
+                - Similar to daemon procees
+                - They run / execute in the kernel space
+                - primary difference is that kernel process have full access to kernel data structure, that makes more powerful that daemon process
+                - not flexible as daemon process, I can change the behavior of daemon process, by changing the configuration files...
+                  but to change the behaviour of kernel processes, one may need to recompile the kernel 
+
+         Process state 
+         -------------
+         Most processes will be in one of the 2 states
+         1. Running state - process in on CPU
+         2. Not-running state - process is off the CPU
+
+         List the process
+         ----------------
+         1. ps     - It display only the running process of the CPU 
+         2. ps ax  -  It will display all the 3 type of process 
+         3. ps lax - It will show more detial about the process      VSZ - Virtual memory, RSS - Non swaped physical memory
+         4. Ps ef  - It shows the user information of the process, Which user has started the process
+         5. pstree - It shows the process tree information
+         6. pstree -P <user name> | it shows the process started with the user
+         7. Top   
+
+ Kill the process
+ -----------------
+ 1. Checking the PID of the process
+    pidof  <application name> /  pgrep <application name>
+
+    # kill <PID>     ------ kill -l it will list out the killing signals 
+
+ changing the priority of the process
+ --------------------------------------
+ Why I should change the priority of a process?
+
+ 1. A process might consume all the resources, its heavy. It may leads to resource crunch for other processess
+    I might want to increase the nice value
+ 2. I want to increase the resources to a process.. it can be finished fast. I will decrease the nice value.
+ 3. The nice values are -20 to 19 for better performance the nice value should +, - means high priority 
+    
+    changing the nice value is 
+    
+    # renice -n <value> -p <PID>  --- already running   for running using #nice  
+
+ 4. Putting jobs to the backgroud using &
+
+ 5. Finding the backgroud jobs using #jobs command

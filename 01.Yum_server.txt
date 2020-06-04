@@ -73,3 +73,20 @@ command in yum for regular usages:
 6. Searching package using best option 
 
 # pkcon search name <package name>
+
+7. Enable default yes / no optin in configuration files is       ------ dont use this option
+
+#vim /etc/yum.conf   
+assumeyes=1         ---- that means i am telling the machine that default option is "yes"
+
+8. Checking the history
+
+#yum history     
+
+9. More details about yum history
+
+#yum history info <ID number>
+
+10. If you want to remove package as well as dependancy do the following command
+
+#yum history undo <ID number>

@@ -1,0 +1,52 @@
+How NTP Works
+-------------
+Purpose : Synchronize the clocks of a server constellation to UTC 
+
+Utility : Time stamps are used every where, Starting from log files to banking apps Airline industory.
+
+Packet Exchange : UDP Protocol - port 123
+
+Packet sent : 
+------------
+         ---------> Client send the request with its timestamp
+         <--------- Server returns the packet with 3 timestamps
+                    1.Echo of the client time stamp
+                    2.When did i (Server) receive request?
+                    3.When did i (server) send the response?
+
+ -Client estimate the offset between him and the server
+ -client can have many servers
+ -client choose only one NTP server to sync time
+ -minimize the offset and skew with feedback loop
+
+ Network Use of NTP
+ -------------------
+  - pairof very small packets at every 64 - 1024 seconds for each server
+  - As per the latest estimate only 0.01% of world traffic on internet is of NTP ..... (less than 5 GB per day)
+
+  NTP with RHEL 7
+  ----------------
+  - Latest versions is NTP v4
+  - The speed of communication between NTP client and NTP server will be 8 times more if "iburst" keywork is used.
+
+ HOW IT Works ???
+ -----------------
+ - Mr. David Mills, 1985
+ - Based on "Marzullo's" algorithm. But it is used only by high stata servers to get accurate time using several sources.
+
+ -But normally, a normal client, on a normal day will use only one server
+
+ -NTP time stamps, are stored in seconds, since 1 january, 1990
+
+ -Time stamp is actually a 64 bit in size. 32 bit is for number of seconds and 32 bit is for fraction of seconds.
+
+ Congiguration file 
+ -------------------
+ 1. Rhel 7  - /etc/chrony.conf
+ 2. Rhel 6  - /etc/ntp.conf
+
+ commands
+ ---------
+ 1. chrony sources
+ 2.timedatectl
+ 
